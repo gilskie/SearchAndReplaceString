@@ -249,10 +249,10 @@ def populate_table_to_class(table_file_location):
         return 0
 
 
-def perform_auto_tag(file_content, text_to_find, expected_tag):
+def perform_auto_tag(file_line_content, text_to_find, expected_tag):
     complete_tag = str(expected_tag) + str(text_to_find) + str(expected_tag.replace("<","</"))
-    file_content = re.sub("([^>]+)" + text_to_find + "([^<]+)", r"\1" + complete_tag + r"\2", file_content)
-    return file_content
+    file_line_content = re.sub("([^>]+)" + text_to_find + "([^<]+)", r"\1" + complete_tag + r"\2", file_line_content)
+    return file_line_content
 
 
 main()
