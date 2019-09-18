@@ -13,7 +13,10 @@ import re
 def main():
     try:
         config = configparser.ConfigParser()
+
         configuration_file = sys.path[0] + '\configurationFile.ini'
+        # configuration_file = sys.executable.replace("Main.exe","configurationFile.ini")
+
         # print(f"Configuration location: {configuration_file}")
 
         config.read(configuration_file)
@@ -23,13 +26,15 @@ def main():
         output_location = default_setting["output_location"]
         table_file = default_setting["table_file"]
         table_file_drop_down = default_setting["table_file_drop_down"]
+        validation_file = default_setting["validation"]
         # breakpoint()
 
         # populate_table_to_class(table_file)
         generate_view(table_file,
                       table_file_drop_down,
                       input_location,
-                      output_location)
+                      output_location,
+                      validation_file)
 
     except Exception as e:
         print(f"Error occurred: {e}")
@@ -39,7 +44,8 @@ def main():
 def generate_view(table_file,
                   table_file_drop_down,
                   input_location,
-                  output_location):
+                  output_location,
+                  validation_file):
     window = tkinter.Tk()
     window.title("Welcome to final project!")
     window.geometry("450x200")
@@ -170,15 +176,13 @@ def generate_view(table_file,
 
     # Requirement from Renz!
     def validate_file():
-        perform_validation_of_file()
+        perform_validation_of_file(label_file_display, validation_file)
 
     btn_validate = tkinter.Button(window,
                                   text="Validate",
                                   fg="orange",
                                   command=validate_file)
-    btn_validate.grid(column=1,
-                      row=4,
-                      sticky=tkinter.W)
+    btn_validate.grid(column=1, row=4, sticky=tkinter.W)
 
     # note: must be last always!
     window.mainloop()
@@ -240,8 +244,10 @@ def process_file_using_drop_down_tag(file_location,
 
     if os.path.isfile(output_location + "\\" + ntpath.basename(file_location)) and len(output_location) > 0:
         os.unlink(output_location + "\\" + ntpath.basename(file_location))
-    else:
+    elif os.path.isfile(new_output_location + "\\" + ntpath.basename(file_location)) and len(output_location) > 0:
         os.unlink(new_output_location + "\\" + ntpath.basename(file_location))
+    else:
+        pass
 
     if len(new_output_location) > 0:
         file_output = open(new_output_location + "\\" + ntpath.basename(file_location), "wt")
@@ -313,8 +319,9 @@ def perform_auto_tag(file_line_content, text_to_find, expected_tag):
     return file_line_content
 
 
-def perform_validation_of_file():
-    pass
+def perform_validation_of_file(label_file_display, validation_file):
+    print(f"validate file location:{label_file_display['text']}, {validation_file}")
+    #pass
 
 
 main()
