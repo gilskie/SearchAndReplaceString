@@ -1,4 +1,5 @@
 import SearchAndTagString
+import ValidationClass
 import configparser
 import sys
 import tkinter
@@ -251,6 +252,8 @@ def process_file_using_drop_down_tag(file_location,
 
     if len(new_output_location) > 0:
         file_output = open(new_output_location + "\\" + ntpath.basename(file_location), "wt")
+    elif os.path.isdir(output_location) is False:
+        messagebox.showerror(title="Directory not found:", message="Output directory not found!")
     else:
         file_output = open(output_location + "\\" + ntpath.basename(file_location), "wt")
 
@@ -319,8 +322,35 @@ def perform_auto_tag(file_line_content, text_to_find, expected_tag):
     return file_line_content
 
 
+def populate_validation_array(validation_config_location):
+    if len(validation_config_location) < 0:
+        messagebox.showerror(title="Missing validation file:", message="Error: missing validation file found!")
+    else:
+        if len(validation_config_location) > 0:
+            f = open(validation_config_location, "r")
+            lines = f.readlines()
+            my_validate_tag_string = []
+
+            for line in lines:
+                line = line.replace("\n", "")
+                validate_string = line.split("|||")
+
+                my_validate_tag_string.append(ValidationClass.ReadValidationFile(validate_string[0], validate_string[1]))
+
+            f.close()
+
+            return my_validate_tag_string
+        else:
+            return 0
+
+
 def perform_validation_of_file(label_file_display, validation_file):
-    print(f"validate file location:{label_file_display['text']}, {validation_file}")
+    validation_lists = populate_validation_array(validation_file)
+
+    for validations in validation_lists:
+        print(f"{validations.search_tag} - {validations.error_string}")
+
+    #print(f"validate file location:{label_file_display['text']}, {validation_file}")
     #pass
 
 
